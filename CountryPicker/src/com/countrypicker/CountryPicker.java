@@ -16,7 +16,6 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -27,7 +26,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class CountryPicker extends DialogFragment implements
+public class CountryPicker extends android.support.v4.app.DialogFragment implements
 		Comparator<Country> {
 	/**
 	 * View components
