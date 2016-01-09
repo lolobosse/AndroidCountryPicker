@@ -13,12 +13,12 @@ apply plugin: 'com.github.dcendents.android-maven'
 group 'com.github.SocialbitGmbH'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.0'
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
 
     defaultConfig {
-        minSdkVersion 8
-        targetSdkVersion 17
+        minSdkVersion 14
+        targetSdkVersion 12
     }
     buildTypes {
         release {
@@ -32,5 +32,5 @@ android {
 }
 
 dependencies {
-    provided 'com.android.support:support-v4:23.0.0'
+    provided 'com.android.support:support-v4:22.2.1'
 }
