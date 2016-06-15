@@ -1,4 +1,5 @@
 <resources>
 
     <string name="search">Suchen...</string>
+    <string name="connect_via_phone">Kontakt via Telefon</string>
 </resources>
