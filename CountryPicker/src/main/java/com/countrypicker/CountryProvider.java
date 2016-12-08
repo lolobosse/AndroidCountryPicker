@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,7 +63,13 @@ public class CountryProvider {
         Collections.sort(countryList, new Comparator<Country>() {
             @Override
             public int compare(Country lhs, Country rhs) {
-                return lhs.getName().compareTo(rhs.getName());
+                if (lhs.getCode().toLowerCase().equals("de")){
+                    return -1;
+                }
+                else if (rhs.getCode().toLowerCase().equals("de")){
+                    return 1;
+                }
+                return stripAccents(lhs.getName()).compareTo(stripAccents(rhs.getName()));
             }
         });
     }
@@ -78,5 +85,12 @@ public class CountryProvider {
             }
         }
         return null;
+    }
+
+    public static String stripAccents(String s)
+    {
+        s = Normalizer.normalize(s, Normalizer.Form.NFD);
+        s = s.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return s;
     }
 }
