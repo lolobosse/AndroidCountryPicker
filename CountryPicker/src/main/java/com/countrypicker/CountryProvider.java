@@ -63,10 +63,10 @@ public class CountryProvider {
         Collections.sort(countryList, new Comparator<Country>() {
             @Override
             public int compare(Country lhs, Country rhs) {
-                if (lhs.getCode().toLowerCase().equals("de")){
+                if (lhs.getCode().toLowerCase().equals("af")){
                     return -1;
                 }
-                else if (rhs.getCode().toLowerCase().equals("de")){
+                else if (rhs.getCode().toLowerCase().equals("af")){
                     return 1;
                 }
                 return stripAccents(lhs.getName()).compareTo(stripAccents(rhs.getName()));
