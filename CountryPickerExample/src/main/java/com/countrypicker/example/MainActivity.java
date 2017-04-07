@@ -4,33 +4,55 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.countrypicker.City;
+import com.countrypicker.Country;
 import com.countrypicker.CountryPicker;
 import com.countrypicker.CountryPickerListener;
+import com.countrypicker.CountryProvider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity {
+
+    private String TAG = getClass().getSimpleName();
+    private List<Country> countryList;
+    private List<City> cityList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.countrypickerexample.R.layout.activity_main);
+        countryList = new ArrayList<>();
+        cityList = new ArrayList<>();
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
-        CountryPicker picker = new CountryPicker();
-        picker.setListener(new CountryPickerListener() {
 
+        try {
+            CountryProvider countryProvider = new CountryProvider(getApplicationContext());
+            countryList = countryProvider.getCountries();
+            cityList = countryProvider.getCityList();
+        } catch (Exception e) {
+            Log.e(TAG, "onCreate: ", e);
+        }
+
+
+        CountryPicker picker = new CountryPicker();
+        picker.setSearchableList(cityList);
+        picker.setListener(new CountryPickerListener() {
             @Override
-            public void onSelectCountry(String name, String code) {
-                Toast.makeText(
-                        MainActivity.this,
-                        "Country Name: " + name + " - Code: " + code,
-                        Toast.LENGTH_SHORT).show();
+            public void onFilter(String filter) {
+
             }
         });
 
@@ -49,20 +71,36 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                CountryPicker picker = CountryPicker.newInstance("Select Country");
-                picker.setListener(new CountryPickerListener() {
+                try {
 
-                    @Override
-                    public void onSelectCountry(String name, String code) {
-                        Toast.makeText(
-                                MainActivity.this,
-                                "Country Name: " + name + " - Code: " + code,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    Log.d(TAG, "onMenuItemClick: ");
+                    CountryPicker picker = CountryPicker.newInstance("Select Country");
+                    picker.setSearchableList(cityList);
+                    /**
+                    picker.getCountryListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Log.d(TAG, "onItemClick: " + countryList.get(position).getSearchableString());
+                        }
+                    });
+                    picker.setListener(new CountryPickerListener() {
+                        @Override
+                        public void onSelectCountry(String name, String code) {
+                            Toast.makeText(
+                                    MainActivity.this,
+                                    "Country Name: " + name + " - Code: " + code,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                     **/
 
-                picker.show(getSupportFragmentManager(), "COUNTRY_PICKER");
-                return false;
+                    picker.show(getSupportFragmentManager(), "COUNTRY_PICKER");
+                    return false;
+                } catch (Exception e) {
+                    Log.e(TAG, "onMenuItemClick: ", e);
+                    return false;
+                }
+
             }
         });
         return true;

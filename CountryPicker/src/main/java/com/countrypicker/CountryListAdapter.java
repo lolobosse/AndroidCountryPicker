@@ -1,6 +1,8 @@
 package com.countrypicker;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +15,26 @@ import java.util.Locale;
 
 public class CountryListAdapter extends BaseAdapter {
 
+    private String TAG = getClass().getSimpleName();
     private Context context;
-    private List<Country> countries;
+    // Implies the objects in the list are CountryPickerModels
+    // i.e. they have to implement CountryPickerModel
+    private List<? extends CountryPickerModel> countryPickerModels;
 
-    protected CountryListAdapter(Context context, List<Country> countries) {
-        super();
+
+    protected CountryListAdapter(Context context, List<? extends CountryPickerModel> countryPickerModels) {
         this.context = context;
-        this.countries = countries;
+        this.countryPickerModels =  countryPickerModels;
     }
 
     @Override
     public int getCount() {
-        return countries.size();
+        return countryPickerModels.size();
     }
 
     @Override
-    public Country getItem(int position) {
-        return countries.get(position);
+    public CountryPickerModel getItem(int position) {
+        return countryPickerModels.get(position);
     }
 
     @Override
@@ -51,15 +56,19 @@ public class CountryListAdapter extends BaseAdapter {
             convertView.setTag(cell);
         }
 
-        Country country = getItem(position);
-        cell.textView.setText(country.getName());
-        cell.imageView.setImageResource(getResId(country));
-
+        cell.textView.setText(getItem(position).getSearchableString());
+        if (getItem(position).hasID()) {
+            cell.imageView.setImageResource(getResId(getItem(position).getID()));
+            cell.imageView.setVisibility(View.VISIBLE);
+        } else {
+            cell.imageView.setVisibility(View.GONE);
+        }
         return convertView;
     }
 
-    private int getResId(Country country) {
-        String drawableName = "flag_" + country.getCode().toLowerCase(Locale.ENGLISH);
+    // Only needed when showing country flag in the list (nationality only)
+    private int getResId(String id) {
+        String drawableName = "flag_" + id.toLowerCase(Locale.ENGLISH);
         return context.getResources()
                 .getIdentifier(drawableName, "drawable", context.getPackageName());
     }
