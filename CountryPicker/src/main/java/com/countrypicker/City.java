@@ -1,24 +1,21 @@
 package com.countrypicker;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /**
- * POJO
+ * Created by Mark O'Sullivan on 05/04/17.
  */
-public class Country implements CountryPickerModel {
 
-    private String code;
+public class City implements CountryPickerModel {
+
+
     private String name;
 
-    public void setCode(String code) {
-        this.code = code;
+    public City(String name) {
+        this.name = name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
-
     @Override
     public String getSearchableString() {
         return name;
@@ -26,11 +23,11 @@ public class Country implements CountryPickerModel {
 
     @Override
     public Boolean hasID() {
-        return !code.isEmpty();
+        return false;
     }
 
     @Override
     public String getID() {
-        return code;
+        return null;
     }
 }

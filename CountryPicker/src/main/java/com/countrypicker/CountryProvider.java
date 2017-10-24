@@ -26,9 +26,12 @@ public class CountryProvider {
     private Context context;
     private String countryJson;
     private List<Country> countryList;
+    private List<City> cityList;
+    private List<? extends CountryPickerModel> searchableList;
 
     private CountryProvider() {
         countryList = new ArrayList<>();
+        cityList = new ArrayList<>();
     }
 
     public CountryProvider(Context context) throws IOException, JSONException {
@@ -36,6 +39,7 @@ public class CountryProvider {
         this.context = context;
         readCountryJsonString();
         parseCountryJson();
+        setupCityList();
     }
 
     private void readCountryJsonString()
@@ -63,24 +67,43 @@ public class CountryProvider {
         Collections.sort(countryList, new Comparator<Country>() {
             @Override
             public int compare(Country lhs, Country rhs) {
-                if (lhs.getCode().toLowerCase().equals("de")){
+                if (lhs.getID().toLowerCase().equals("af")){
                     return -1;
                 }
-                else if (rhs.getCode().toLowerCase().equals("de")){
+                else if (rhs.getID().toLowerCase().equals("af")){
                     return 1;
                 }
-                return stripAccents(lhs.getName()).compareTo(stripAccents(rhs.getName()));
+                return stripAccents(lhs.getSearchableString()).compareTo(stripAccents(rhs.getSearchableString()));
             }
         });
+    }
+
+    private void setupCityList() {
+        cityList.add(new City("Paris"));
+        cityList.add(new City("London"));
+        cityList.add(new City("Dublin"));
+        cityList.add(new City("Edinburgh"));
+    }
+
+    public List<City> getCityList() {
+        return cityList;
     }
 
     public List<Country> getCountries() {
         return countryList;
     }
 
+    public void setSearchableList(List<? extends CountryPickerModel> searchableList) {
+        this.searchableList = searchableList;
+    }
+
+    public List<? extends CountryPickerModel> getSearchableList() {
+        return searchableList;
+    }
+
     public Country getCountryByCode(String code) {
         for (Country country : countryList) {
-            if (country.getCode().equalsIgnoreCase(code)) {
+            if (country.getID().equalsIgnoreCase(code)) {
                 return country;
             }
         }

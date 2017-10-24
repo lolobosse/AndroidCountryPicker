@@ -8,14 +8,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class CountryPicker extends DialogFragment {
 
@@ -43,15 +41,14 @@ public class CountryPicker extends DialogFragment {
     private CountryProvider countryProvider;
 
     private List<Country> selectedCountriesList = new ArrayList<>();
+    private List<City> selectedCityList = new ArrayList<>();
+    private List<? extends CountryPickerModel> searchableList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
             countryProvider = new CountryProvider(getActivity());
-            for (Country country : countryProvider.getCountries()) {
-                selectedCountriesList.add(country);
-            }
         } catch (Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }
@@ -86,19 +83,24 @@ public class CountryPicker extends DialogFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        adapter = new CountryListAdapter(getActivity(), selectedCountriesList);
+        Log.d(TAG, "onViewCreated: ");
+        adapter = new CountryListAdapter(getActivity(), searchableList);
         countryListView.setAdapter(adapter);
+
+        /**
         countryListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 if (listener != null) {
+                    countryListView.
                     Country country = selectedCountriesList.get(position);
-                    listener.onSelectCountry(country.getName(),
-                            country.getCode());
+                    listener.onSelectCountry(country.getSearchableString(),
+                            country.getID());
                 }
             }
         });
+         **/
 
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -114,6 +116,11 @@ public class CountryPicker extends DialogFragment {
                 filter(s.toString());
             }
         });
+    }
+
+    public void setSearchableList(List<? extends CountryPickerModel> searchableList) {
+        Log.d(TAG, "setSearchableList: updating data");
+        this.searchableList = searchableList;
     }
 
     /**
@@ -153,12 +160,23 @@ public class CountryPicker extends DialogFragment {
     }
 
     private void filter(String text) {
+        /*
         selectedCountriesList.clear();
         for (Country country : countryProvider.getCountries()) {
-            if (country.getName().toLowerCase(Locale.ENGLISH).contains(text.toLowerCase())) {
+            if (country.getSearchableString().toLowerCase(Locale.ENGLISH).contains(text.toLowerCase())) {
                 selectedCountriesList.add(country);
             }
         }
+        adapter.notifyDataSetChanged();
+        */
+        List<CountryPickerModel> filteredList = new ArrayList<>();
+        for (CountryPickerModel countryPickerModel : searchableList) {
+            if (countryPickerModel.getSearchableString().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(countryPickerModel);
+            } else {
+            }
+        }
+        searchableList = filteredList;
         adapter.notifyDataSetChanged();
     }
 }
